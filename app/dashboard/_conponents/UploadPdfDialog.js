@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -13,11 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import uuid4 from "uuid4";
+import axios from "axios";
 
 function UploadPdfDialog({ children }) {
   const generateUploadUrl = useMutation(api.fileStorage.generateUploadUrl);
@@ -27,7 +28,7 @@ function UploadPdfDialog({ children }) {
   const addFileEntry = useMutation(api.fileStorage.AddFileEntryToDb);
   const getFileUrl = useMutation(api.fileStorage.getFileUrl);
   const { user } = useUser();
-
+  const embedDocument = useAction(api.myAction.ingest);
   const onFileSelect = (event) => {
     setFile(event.target.files[0]);
   };
@@ -43,7 +44,6 @@ function UploadPdfDialog({ children }) {
       });
 
       const { storageId } = await result.json();
-      console.log("storageId :", storageId);
       const fileId = uuid4();
       const fileUrl = await getFileUrl({ storageId: storageId });
       const resp = await addFileEntry({
@@ -52,6 +52,13 @@ function UploadPdfDialog({ children }) {
         fileUrl: fileUrl,
         fileName: fileName ?? "Untitled File",
         createdBy: user?.primaryEmailAddress?.emailAddress,
+      });
+
+      const apiResp = await axios.get("/api/pdf-loader?pdfUrl=" + fileUrl);
+      console.log("apiResp :", apiResp);
+      await embedDocument({
+        splitText: apiResp.data.result,
+        fileId: fileId,
       });
     } catch (error) {
       console.log("error :", error);
