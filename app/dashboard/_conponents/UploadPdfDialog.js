@@ -25,6 +25,7 @@ function UploadPdfDialog({ children }) {
   const [file, setFile] = useState();
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const addFileEntry = useMutation(api.fileStorage.AddFileEntryToDb);
   const getFileUrl = useMutation(api.fileStorage.getFileUrl);
   const { user } = useUser();
@@ -55,11 +56,12 @@ function UploadPdfDialog({ children }) {
       });
 
       const apiResp = await axios.get("/api/pdf-loader?pdfUrl=" + fileUrl);
-      console.log("apiResp :", apiResp);
+     
       await embedDocument({
         splitText: apiResp.data.result,
         fileId: fileId,
       });
+      setOpen(false)
     } catch (error) {
       console.log("error :", error);
     } finally {
@@ -68,8 +70,11 @@ function UploadPdfDialog({ children }) {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={open}>
+      {/* <DialogTrigger asChild>{children}</DialogTrigger> */}
+      <DialogTrigger asChild>
+        <Button onClick={() => setOpen(true)} className='w-full'>+ Upload PDF File</Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Upload PDF File</DialogTitle>
@@ -97,7 +102,7 @@ function UploadPdfDialog({ children }) {
 
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
               Close
             </Button>
           </DialogClose>
