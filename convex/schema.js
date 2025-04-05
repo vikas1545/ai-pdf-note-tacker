@@ -19,7 +19,10 @@ export default defineSchema({
   documents: defineTable({
     embedding: v.array(v.number()),
     text: v.string(),
-    metadata: v.any(),
+    // metadata: v.any(),
+    metadata: v.object({
+      fileId: v.any(),
+    }),
   }).vectorIndex("byEmbedding", {
     vectorField: "embedding",
     dimensions: 768,

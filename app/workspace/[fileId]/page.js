@@ -13,13 +13,10 @@ function page() {
     fileId: fileId,
   });
 
-  useEffect(() => {
-    console.log("fileInfo :", fileInfo);
-  }, [fileInfo]);
 
   return (
     <div>
-      <WorkspaceHeader />
+      <WorkspaceHeader fileName={fileInfo?.fileName}/>
       <div className="grid grid-cols-2 gap-5">
         <div>
           <TextEditor/>

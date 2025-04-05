@@ -4,7 +4,7 @@ import { action } from "./_generated/server.js";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 import { v } from "convex/values";
-
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 export const ingest = action({
   args: {
     splitText: v.any(),
@@ -13,9 +13,10 @@ export const ingest = action({
   handler: async (ctx, args) => {
     await ConvexVectorStore.fromTexts(
       args.splitText,
-      args.fileId,
+      // args.fileId, this store fileId as string
+      { fileId: args.fileId },
       new GoogleGenerativeAIEmbeddings({
-        apiKey: process.env.GEMINI_API_KEY,
+        apiKey: apiKey,
         model: "text-embedding-004",
         taskType: TaskType.RETRIEVAL_DOCUMENT,
         title: "Document title",
@@ -33,7 +34,7 @@ export const search = action({
   handler: async (ctx, args) => {
     const vectorStore = new ConvexVectorStore(
       new GoogleGenerativeAIEmbeddings({
-        apiKey: process.env.GEMINI_API_KEY,
+        apiKey: apiKey,
         model: "text-embedding-004",
         taskType: TaskType.RETRIEVAL_DOCUMENT,
         title: "Document title",
@@ -41,25 +42,30 @@ export const search = action({
       { ctx }
     );
 
-    //const resultOne = await (await vectorStore.similaritySearch(args.query, 1)).filter(q=>q.metadata==args.fileId);
-    const resultOne1 = await await vectorStore.similaritySearch(args.query, 1);
+    const resultOne = await (
+      await vectorStore.similaritySearch(args.query, 1)
+    ).filter((q) => q.metadata.fileId == args.fileId);
+    console.log("resultOne ================= :", resultOne);
+    return JSON.stringify(resultOne);
 
-    let found = false;
-    resultOne1.forEach((doc) => {
-      const metadataString = Object.values(doc.metadata).join("");
-      if (metadataString === args.fileId) {
-        doc.metadata = { fileId: metadataString };
-        found = true;
-      } else {
-        console.log("No match.");
-        found = false;
-      }
-    });
+    //const resultOne1 =  await vectorStore.similaritySearch(args.query, 1);
+    // console.log("resultOne1 ================= :", resultOne1);
+    // let found = false;
+    // resultOne1.forEach((doc) => {
+    //   const metadataString = Object.values(doc.metadata).join("");
+    //   if (metadataString === args.fileId) {
+    //     doc.metadata = { fileId: metadataString };
+    //     found = true;
+    //   } else {
+    //     console.log("No match.");
+    //     found = false;
+    //   }
+    // });
 
-    if (found) return JSON.stringify(resultOne1);
-    // const resultOne = await resultOne1.filter(q=>q.metadata==args.fileId);
-    //console.log(resultOne);
+    // if (found) return JSON.stringify(resultOne1);
+    // // const resultOne = await resultOne1.filter(q=>q.metadata==args.fileId);
+    // //console.log(resultOne);
 
-    return null;
+    // return null;
   },
 });

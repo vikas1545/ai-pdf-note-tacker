@@ -1,3 +1,4 @@
+import { chatSession } from "@/configs/AIModel";
 import { api } from "@/convex/_generated/api";
 import { useAction } from "convex/react";
 import {
@@ -14,12 +15,14 @@ import {
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import React from "react";
+import { toast } from "sonner";
 
 function EditorExtension({ editor }) {
   const { fileId } = useParams();
   const SearchAI = useAction(api.myAction.search);
 
   const onAIClick = async () => {
+    toast("AI Model is preparing your answer...");
     const selectedText = editor.state.doc.textBetween(
       editor.state.selection.from,
       editor.state.selection.to,
@@ -27,22 +30,37 @@ function EditorExtension({ editor }) {
     );
 
     console.log("selectedText :", selectedText);
-
     const result = await SearchAI({
       query: selectedText,
       fileId: fileId,
     });
-    
+
+    console.log("result :", result);
     const UnformattedAns = JSON.parse(result);
-    let AllUnformattedAns='';
-    UnformattedAns && UnformattedAns.forEach(item=>{
-      AllUnformattedAns=AllUnformattedAns+item.pageContent;
-    });
+    console.log("UnformattedAns :", UnformattedAns);
+    let AllUnformattedAns = "";
+    UnformattedAns &&
+      UnformattedAns.forEach((item) => {
+        AllUnformattedAns = AllUnformattedAns + item.pageContent;
+      });
 
+    const PROMPT =
+      "For question :" +
+      selectedText +
+      " and with the given content as answer," +
+      " please give appropriate answer in HTML format. The answer content is: " +
+      AllUnformattedAns;
 
-    const PROMPT="For question :"+selectedText+" and with the given content as answer,"+
-    " please give appropriate answer in HTML format. The answer content is: "+AllUnformattedAns
-
+    const AiModelResult = await chatSession.sendMessage(PROMPT);
+    const FinalAns = AiModelResult.response
+      .text()
+      .replaceAll("```", "")
+      .replace("html", "");
+    console.log("finalAns : ", FinalAns);
+    const AllText = editor.getHTML();
+    editor.commands.setContent(
+      AllText + "<p><strong>Answer :</strong>" + FinalAns + " </p>"
+    );
   };
   return (
     editor && (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -56,12 +56,12 @@ function UploadPdfDialog({ children }) {
       });
 
       const apiResp = await axios.get("/api/pdf-loader?pdfUrl=" + fileUrl);
-     
+
       await embedDocument({
         splitText: apiResp.data.result,
         fileId: fileId,
       });
-      setOpen(false)
+      setOpen(false);
     } catch (error) {
       console.log("error :", error);
     } finally {
@@ -71,9 +71,10 @@ function UploadPdfDialog({ children }) {
 
   return (
     <Dialog open={open}>
-      {/* <DialogTrigger asChild>{children}</DialogTrigger> */}
       <DialogTrigger asChild>
-        <Button onClick={() => setOpen(true)} className='w-full'>+ Upload PDF File</Button>
+        <Button onClick={() => setOpen(true)} className="w-full">
+          + Upload PDF File
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -102,7 +103,11 @@ function UploadPdfDialog({ children }) {
 
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setOpen(false)}
+            >
               Close
             </Button>
           </DialogClose>
