@@ -4,7 +4,9 @@ import { action } from "./_generated/server.js";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 import { v } from "convex/values";
-const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+import { apiKeyData } from "@/token.js";
+//const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const apiKey = apiKeyData;
 export const ingest = action({
   args: {
     splitText: v.any(),
