@@ -18,7 +18,7 @@ function TextEditor({ fileId }) {
         placeholder: "Start Taking Your Notes Here...",
       }),
     ],
-    content: "<p>Hello World! 🌎️</p>",
+    content: "",
     editorProps: {
       attributes: {
         class: "focus:outline-none h-screen p-5",
