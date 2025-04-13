@@ -4,7 +4,9 @@ import { action } from "./_generated/server.js";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 import { v } from "convex/values";
-const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+import { apiKeyData } from "@/token.js";
+//const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const apiKey = apiKeyData;
 export const ingest = action({
   args: {
     splitText: v.any(),
@@ -45,7 +47,6 @@ export const search = action({
     const resultOne = await (
       await vectorStore.similaritySearch(args.query, 1)
     ).filter((q) => q.metadata.fileId == args.fileId);
-    console.log("resultOne ================= :", resultOne);
     return JSON.stringify(resultOne);
 
     //const resultOne1 =  await vectorStore.similaritySearch(args.query, 1);

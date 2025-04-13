@@ -5,6 +5,10 @@ import React, { useEffect } from "react";
 import EditorExtension from "./EditorExtension";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import Highlight from "@tiptap/extension-highlight";
+import Strike from '@tiptap/extension-strike'
+import Underline from "@tiptap/extension-underline";
+import Text from '@tiptap/extension-text'
 
 function TextEditor({ fileId }) {
   const notes = useQuery(api.notes.GetNotes, {
@@ -14,11 +18,15 @@ function TextEditor({ fileId }) {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Strike,
+      Underline,
+      Text,
       Placeholder.configure({
         placeholder: "Start Taking Your Notes Here...",
       }),
+      Highlight.configure({ multicolor: true })
     ],
-    content: "<p>Hello World! 🌎️</p>",
+    content: "",
     editorProps: {
       attributes: {
         class: "focus:outline-none h-screen p-5",

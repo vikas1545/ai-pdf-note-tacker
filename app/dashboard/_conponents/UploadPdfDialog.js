@@ -19,8 +19,9 @@ import { Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import uuid4 from "uuid4";
 import axios from "axios";
+import { toast } from "sonner";
 
-function UploadPdfDialog({ children }) {
+function UploadPdfDialog({ children, isMaxFile }) {
   const generateUploadUrl = useMutation(api.fileStorage.generateUploadUrl);
   const [file, setFile] = useState();
   const [fileName, setFileName] = useState("");
@@ -56,13 +57,14 @@ function UploadPdfDialog({ children }) {
       });
 
       const apiResp = await axios.get("/api/pdf-loader?pdfUrl=" + fileUrl);
-
       await embedDocument({
         splitText: apiResp.data.result,
         fileId: fileId,
       });
       setOpen(false);
+      toast.success("Pdf uploaded...");
     } catch (error) {
+      toast.error("Failed to Upload Pdf");
       console.log("error :", error);
     } finally {
       setLoading(false);
@@ -71,7 +73,7 @@ function UploadPdfDialog({ children }) {
 
   return (
     <Dialog open={open}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild disabled={isMaxFile}>
         <Button onClick={() => setOpen(true)} className="w-full">
           + Upload PDF File
         </Button>

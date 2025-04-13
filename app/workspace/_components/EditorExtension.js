@@ -26,51 +26,54 @@ function EditorExtension({ editor }) {
 
   const onAIClick = async () => {
     toast("AI Model is preparing your answer...");
-    const selectedText = editor.state.doc.textBetween(
-      editor.state.selection.from,
-      editor.state.selection.to,
-      " "
-    );
+    try {
+      const selectedText = editor.state.doc.textBetween(
+        editor.state.selection.from,
+        editor.state.selection.to,
+        " "
+      );
 
-    console.log("selectedText :", selectedText);
-    const result = await SearchAI({
-      query: selectedText,
-      fileId: fileId,
-    });
-
-    console.log("result :", result);
-    const UnformattedAns = JSON.parse(result);
-    console.log("UnformattedAns :", UnformattedAns);
-    let AllUnformattedAns = "";
-    UnformattedAns &&
-      UnformattedAns.forEach((item) => {
-        AllUnformattedAns = AllUnformattedAns + item.pageContent;
+      // console.log("selectedText :", selectedText);
+      const result = await SearchAI({
+        query: selectedText,
+        fileId: fileId,
       });
 
-    const PROMPT =
-      "For question :" +
-      selectedText +
-      " and with the given content as answer," +
-      " please give appropriate answer in HTML format. The answer content is: " +
-      AllUnformattedAns;
+      // console.log("result :", result);
+      const UnformattedAns = JSON.parse(result);
+      // console.log("UnformattedAns :", UnformattedAns);
+      let AllUnformattedAns = "";
+      UnformattedAns &&
+        UnformattedAns.forEach((item) => {
+          AllUnformattedAns = AllUnformattedAns + item.pageContent;
+        });
 
-    const AiModelResult = await chatSession.sendMessage(PROMPT);
-    const FinalAns = AiModelResult.response
-      .text()
-      .replaceAll("```", "")
-      .replace("html", "");
-    console.log("finalAns : ", FinalAns);
-    const AllText = editor.getHTML();
-    editor.commands.setContent(
-      AllText + "<p><strong>Answer :</strong>" + FinalAns + " </p>"
-    );
+      const PROMPT =
+        "For question :" +
+        selectedText +
+        " and with the given content as answer," +
+        " please give appropriate answer in HTML format. The answer content is: " +
+        AllUnformattedAns;
 
-    saveNotes({
-      notes: editor.getHTML(),
-      fileId: fileId,
-      createdBy: user?.primaryEmailAddress?.emailAddress,
-    });
-    
+      const AiModelResult = await chatSession.sendMessage(PROMPT);
+      const FinalAns = AiModelResult.response
+        .text()
+        .replaceAll("```", "")
+        .replace("html", "");
+      console.log("finalAns : ", FinalAns);
+      const AllText = editor.getHTML();
+      editor.commands.setContent(
+        AllText + "<p><strong>Answer :</strong>" + FinalAns + " </p>"
+      );
+
+      saveNotes({
+        notes: editor.getHTML(),
+        fileId: fileId,
+        createdBy: user?.primaryEmailAddress?.emailAddress,
+      });
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   };
   return (
     editor && (
@@ -97,12 +100,6 @@ function EditorExtension({ editor }) {
             >
               <Underline />
             </button>
-            <button
-              onClick={() => editor.chain().focus().toggleCode().run()}
-              className={editor.isActive("code") ? "is-active" : ""}
-            >
-              <Code />
-            </button>
 
             <button
               onClick={() => editor.chain().focus().toggleHighlight().run()}
@@ -118,7 +115,7 @@ function EditorExtension({ editor }) {
               <StrikethroughIcon />
             </button>
 
-            <button
+            {/* <button
               onClick={() => editor.chain().focus().setTextAlign("left").run()}
               className={
                 editor.isActive({ textAlign: "left" }) ? "text-blue-500" : ""
@@ -146,6 +143,7 @@ function EditorExtension({ editor }) {
             >
               <AlignRight />
             </button>
+          */}
 
             <button
               onClick={() => onAIClick()}
