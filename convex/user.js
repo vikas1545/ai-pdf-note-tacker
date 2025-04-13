@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const createUser = mutation({
   args: {
@@ -44,5 +44,22 @@ export const userUpgradePlan = mutation({
     }
 
     return "User not found or updation failed";
+  },
+});
+
+export const GetUserInfo = query({
+  args: {
+    userEmail: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    if (!args.userEmail) {
+      return;
+    }
+
+    const result = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("email"), args.userEmail))
+      .collect();
+    return result[0];
   },
 });
