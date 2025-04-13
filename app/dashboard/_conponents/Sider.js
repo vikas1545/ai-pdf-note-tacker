@@ -15,6 +15,10 @@ function Sider() {
   const { user } = useUser();
   const path = usePathname();
 
+  const GetUserInfo = useQuery(api.user.GetUserInfo, {
+    userEmail: user?.primaryEmailAddress?.emailAddress,
+  });
+
   const fileList = useQuery(api.fileStorage.GetUserFiles, {
     userEmail: user?.primaryEmailAddress?.emailAddress,
   });
@@ -24,7 +28,11 @@ function Sider() {
       <Image src={"/logo.svg"} alt="logo" height={120} width={120} />
 
       <div className="mt-10">
-        <UploadPdfDialog isMaxFile={fileList?.length >= 5 ? true : false}>
+        <UploadPdfDialog
+          isMaxFile={
+            fileList?.length >= 5 && !GetUserInfo?.upgrade ? true : false
+          }
+        >
           <Button className="w-full">+ Upload PDF</Button>
         </UploadPdfDialog>
         <Link href={"/dashboard"}>
@@ -45,11 +53,17 @@ function Sider() {
           </div>
         </Link>
       </div>
-      <div className="absolute bottom-24 w-[80%]">
-        <Progress value={(fileList?.length / 5) * 100} />
-        <p className="text-sm mt-1">{fileList?.length} out of 5 PDF Uploaded</p>
-        <p className="text-sm text-gray-400 mt-2">Upgared to upload more PDF</p>
-      </div>
+      {!GetUserInfo?.upgrade && (
+        <div className="absolute bottom-24 w-[80%]">
+          <Progress value={(fileList?.length / 5) * 100} />
+          <p className="text-sm mt-1">
+            {fileList?.length} out of 5 PDF Uploaded
+          </p>
+          <p className="text-sm text-gray-400 mt-2">
+            Upgared to upload more PDF
+          </p>
+        </div>
+      )}
     </div>
   );
 }
