@@ -8,10 +8,6 @@ import {
   Underline,
   StrikethroughIcon,
   HighlighterIcon,
-  Code,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
   Sparkle,
 } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -39,9 +35,9 @@ function EditorExtension({ editor }) {
         fileId: fileId,
       });
 
-      // console.log("result :", result);
+       console.log("result :", result);
       const UnformattedAns = JSON.parse(result);
-      // console.log("UnformattedAns :", UnformattedAns);
+       console.log("UnformattedAns :", UnformattedAns);
       let AllUnformattedAns = "";
       UnformattedAns &&
         UnformattedAns.forEach((item) => {
