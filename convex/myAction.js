@@ -4,21 +4,22 @@ import { action } from "./_generated/server.js";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 import { v } from "convex/values";
-import { apiKeyData } from "@/token.js";
-//const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-const apiKey = apiKeyData;
+//import { apiKeyData } from "@/token.js";
+//const apiKey = process.env.GEMINI_API_KEY;
+//const apiKey = apiKeyData;
 export const ingest = action({
   args: {
     splitText: v.any(),
     fileId: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args) => {    
     await ConvexVectorStore.fromTexts(
       args.splitText,
       // args.fileId, this store fileId as string
       { fileId: args.fileId },
       new GoogleGenerativeAIEmbeddings({
-        apiKey: apiKey,
+        // apiKey: apiKey,
+        apiKey: process.env.GEMINI_API_KEY,
         model: "text-embedding-004",
         taskType: TaskType.RETRIEVAL_DOCUMENT,
         title: "Document title",
@@ -36,7 +37,8 @@ export const search = action({
   handler: async (ctx, args) => {
     const vectorStore = new ConvexVectorStore(
       new GoogleGenerativeAIEmbeddings({
-        apiKey: apiKey,
+        //apiKey: apiKey,
+        apiKey: process.env.GEMINI_API_KEY,
         model: "text-embedding-004",
         taskType: TaskType.RETRIEVAL_DOCUMENT,
         title: "Document title",
