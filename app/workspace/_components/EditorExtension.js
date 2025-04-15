@@ -14,7 +14,7 @@ import { useParams } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
-function EditorExtension({ editor }) {
+function editorExtension({ editor }) {
   const { fileId } = useParams();
   const SearchAI = useAction(api.myAction.search);
   const saveNotes = useMutation(api.notes.AddNotes);
@@ -154,4 +154,4 @@ function EditorExtension({ editor }) {
   );
 }
 
-export default EditorExtension;
+export default editorExtension;

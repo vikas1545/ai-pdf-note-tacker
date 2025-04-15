@@ -11,7 +11,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-function Sider() {
+function sider() {
   const { user } = useUser();
   const path = usePathname();
 
@@ -68,4 +68,4 @@ function Sider() {
   );
 }
 
-export default Sider;
+export default sider;

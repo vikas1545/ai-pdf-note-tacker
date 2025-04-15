@@ -10,7 +10,7 @@ import Strike from '@tiptap/extension-strike'
 import Underline from "@tiptap/extension-underline";
 import Text from '@tiptap/extension-text'
 
-function TextEditor({ fileId }) {
+function textEditor({ fileId }) {
   const notes = useQuery(api.notes.GetNotes, {
     fileId: fileId,
   });
@@ -48,4 +48,4 @@ function TextEditor({ fileId }) {
   );
 }
 
-export default TextEditor;
+export default textEditor;
