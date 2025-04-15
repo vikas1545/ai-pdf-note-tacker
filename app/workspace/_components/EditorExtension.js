@@ -35,9 +35,7 @@ function EditorExtension({ editor }) {
         fileId: fileId,
       });
 
-       console.log("result :", result);
       const UnformattedAns = JSON.parse(result);
-       console.log("UnformattedAns :", UnformattedAns);
       let AllUnformattedAns = "";
       UnformattedAns &&
         UnformattedAns.forEach((item) => {

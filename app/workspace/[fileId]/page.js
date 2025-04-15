@@ -7,7 +7,7 @@ import { api } from "@/convex/_generated/api";
 import PdfViewer from "../_components/PdfViewer";
 import TextEditor from "../_components/TextEditor";
 
-function page() {
+function Page() {
   const { fileId } = useParams();
   const fileInfo = useQuery(api.fileStorage.GetFileRecord, {
     fileId: fileId,
@@ -28,4 +28,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
