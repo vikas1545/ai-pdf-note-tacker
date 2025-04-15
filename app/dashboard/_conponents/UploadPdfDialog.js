@@ -65,7 +65,6 @@ function UploadPdfDialog({ children, isMaxFile }) {
       toast.success("Pdf uploaded...");
     } catch (error) {
       toast.error("Failed to Upload Pdf");
-      console.log("error :", error);
     } finally {
       setLoading(false);
     }

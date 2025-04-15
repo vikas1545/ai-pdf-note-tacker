@@ -17,7 +17,6 @@ export default function Home() {
       userName: user?.fullName,
     });
 
-    console.log("result :", result);
   };
 
   useEffect(() => {
@@ -26,7 +25,6 @@ export default function Home() {
 
   return (
     <div>
-      viks
       <UserButton />
     </div>
   );
