@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 function Dashboard() {
   const { user } = useUser();
